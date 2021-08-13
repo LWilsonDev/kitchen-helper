@@ -8,9 +8,6 @@ export enum FontSizes {
 export enum ThemeColors {
   white = "#EEE",
   darkGrey = "#343537",
-  brightGreen = "#B4F626",
-  brightBlue = "#AEF7FC",
-  midGrey = "#C4C4C4",
   orange = "#D6652E",
 }
 

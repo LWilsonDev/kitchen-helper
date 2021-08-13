@@ -1,74 +1,80 @@
 import React, {useState, useRef, useEffect} from "react";
-import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Keyboard,
-} from "react-native";
+import {StyleSheet, View, SafeAreaView, ScrollView} from "react-native";
 import {ThemeColors, LOGO_SIZE, Spacing} from "../../layout";
-import ConvertButton from "../components/ConvertButton";
-import UnitPicker from "../components/UnitPicker";
+import UnitPicker, {INPUT_TYPE} from "../components/UnitPicker";
 import UnitInput from "../components/UnitInput";
 import LottieView from "lottie-react-native";
 import {unitType, units} from "../../conversions";
 
 const Converter = () => {
-  const [result, setResult] = useState<string>("");
+  const defaultInput = {
+    id: -1,
+    label: "",
+    symbol: "",
+    conversions: [{id: -1, rate: -1}],
+  };
+  const [input, setInput] = useState<unitType>(defaultInput);
+  const [output, setOutput] = useState<unitType>(defaultInput);
   const [amount, setAmount] = useState<string>("");
-  const [amountUnit, setAmountUnit] = useState<unitType | null>(null);
-  const [resultUnit, setResultUnit] = useState<unitType | null>(null);
+  const [result, setResult] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const animation = useRef<any>(null);
 
-  const calculateResult = (from: unitType, to: unitType, amount: number) => {
-    const rate = from.conversions.find((conversion) => conversion.id === to.id);
-    if (rate) {
-      const res = amount * rate.rate;
-      setResult(res.toFixed(2).toString());
-    }
-  };
-
-  const handleSubmit = (
-    inputUnit: unitType | null,
-    outputUnit: unitType | null,
-    total: string
+  const calculateResult = (
+    inputUnit: unitType,
+    outputUnit: unitType,
+    amount: string
   ) => {
-    if (inputUnit && outputUnit && total) {
-      calculateResult(inputUnit, outputUnit, parseInt(total));
+    let result = "";
+    const rate = inputUnit.conversions.find(
+      (conversion) => conversion.id === outputUnit?.id
+    );
+    if (rate && amount) {
+      const res = parseInt(amount) * rate.rate;
+
+      if (isNaN(res)) {
+        setError("Please enter numbers only");
+        return;
+      }
+
+      result = res.toFixed(2).toString();
     }
 
-    // play animation anyway...
-    animation.current.play();
-    Keyboard.dismiss();
-  };
-
-  const handleUnitSelect = (unit: unitType) => {
-    if (unit.id !== amountUnit?.id) {
-      setAmountUnit(unit);
+    if (result) {
+      setResult(result);
+      animation.current.play();
     }
   };
 
   useEffect(() => {
+    if (!amount) {
+      setError("");
+    }
+  }, [amount]);
+
+  useEffect(() => {
     // Clears the result if user changes the unit selection
-    if (amountUnit?.id === resultUnit?.id) {
-      setResultUnit(null);
+    if (input.id === output.id) {
+      setOutput(defaultInput);
       setResult("");
     }
-  }, [amountUnit?.id, resultUnit?.id, amount]);
+  }, [input, output]);
 
-  const handleResultUnitSelect = (unit: unitType) => {
-    if (amountUnit?.id !== unit.id) {
-      setResultUnit(unit);
-      if (amount && amountUnit && resultUnit) {
-        handleSubmit(amountUnit, resultUnit, amount);
-      } else {
-        setResult("");
-      }
-    } else {
-      setResultUnit(null);
+  const handleSelect = (unit: unitType, inputType: INPUT_TYPE) => {
+    if (inputType === INPUT_TYPE.INPUT && unit.id !== input.id) {
+      setInput(unit);
+    }
+    if (inputType === INPUT_TYPE.OUTPUT && unit.id !== output.id) {
+      setOutput(unit);
     }
   };
+
+  useEffect(() => {
+    if (input.id !== -1 && output.id !== -1 && amount) {
+      calculateResult(input, output, amount);
+    }
+  }, [input.id, output.id, amount]);
 
   return (
     <SafeAreaView style={styles.wrap}>
@@ -87,35 +93,33 @@ const Converter = () => {
         <View style={styles.row}>
           <UnitInput
             placeholder={"Amount"}
-            unit={amountUnit}
-            value={amount}
-            onChangeText={(text) => setAmount(text)}
-            onSubmitEditing={() => handleSubmit(amountUnit, resultUnit, amount)}
+            unit={input}
+            error={error}
+            handleSubmit={(val: string) => setAmount(val)}
           />
           <UnitInput
-            unit={resultUnit}
+            unit={output}
             editable={false}
             placeholder={"Result"}
             value={result}
           />
         </View>
-        <ConvertButton
-          onPress={() => handleSubmit(amountUnit, resultUnit, amount)}
-        />
         <View style={styles.unitPickerContainer}>
           <UnitPicker
             title={"From"}
             disabled={null}
             units={units}
-            selected={amountUnit}
-            handleUnitSelect={handleUnitSelect}
+            selected={input}
+            inputType={INPUT_TYPE.INPUT}
+            handleUnitSelect={handleSelect}
           />
           <UnitPicker
             title={"To"}
-            disabled={amountUnit}
+            disabled={input}
             units={units}
-            selected={resultUnit}
-            handleUnitSelect={handleResultUnitSelect}
+            selected={output}
+            inputType={INPUT_TYPE.OUTPUT}
+            handleUnitSelect={handleSelect}
           />
         </View>
       </ScrollView>
@@ -135,7 +139,6 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: Spacing.standard,
-    flexGrow: 1, // Required for scrollView for dismissing keyboard
   },
   logo: {
     marginTop: Spacing.double * 2,

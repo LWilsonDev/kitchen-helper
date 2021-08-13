@@ -27,14 +27,11 @@ export default UnitButton;
 
 const styles = StyleSheet.create({
   button: {
-    //backgroundColor: ThemeColors.brightBlue,
     width: Dimens.unitButton,
-
     margin: Spacing.standard,
   },
   selected: {
     backgroundColor: ThemeColors.orange,
-
     textDecorationLine: "underline",
   },
 });
