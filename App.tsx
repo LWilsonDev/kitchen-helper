@@ -1,6 +1,5 @@
 import {StatusBar} from "expo-status-bar";
 import React from "react";
-import {StyleSheet} from "react-native";
 import Converter from "./src/screens/Converter";
 
 export default function App() {
@@ -11,12 +10,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
