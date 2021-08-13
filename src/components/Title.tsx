@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, Text, View, TextProps} from "react-native";
+import {StyleSheet, Text, TextProps} from "react-native";
 import {FontSizes, ThemeColors} from "../../layout";
 
 interface TitleProps extends TextProps {}

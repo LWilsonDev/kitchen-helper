@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {StyleSheet} from "react-native";
 import {Button, ButtonProps} from "react-native-elements";
 import {ThemeColors, Dimens, Spacing} from "../../layout";
