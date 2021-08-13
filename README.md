@@ -6,6 +6,11 @@
 
 A demo of this app can be found [here](https://expo.dev/@lwilsondev/kitchen-helper) - you will need to download the Expo Go app on your device to try it out.
 
+To run this code locally:
+
+1. Clone this repo and ensure you have [Expo Cli](https://docs.expo.dev/get-started/installation/) installed
+2. Run `expo start`
+
 #### Overview
 
 This is a very small app for converting grams to ounces, and other common cooking units.
