@@ -4,7 +4,7 @@
 
 #### Demo
 
-A demo of this app can be found [here](https://expo.dev/@lwilsondev/kitchen-helper) - you will need to download the Expo Go app on your device to try it out.
+A demo of this app can be found [here](https://expo.dev/@lwilsondev/kitchen-helper) - you will need to download the Expo Go app on your device to try it out - and unfortunately this option is currently only open to Android users, ios users require a direct invitation.
 
 To run this code locally:
 
